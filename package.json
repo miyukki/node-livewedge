@@ -1,0 +1,27 @@
+{
+  "name": "node-livewedge",
+  "version": "0.0.1",
+
+  "description": "A module to control Cerevo LiveWedge Switcher.",
+  "homepage": "https://github.com/miyukki/node-livewedge",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/miyukki/node-livewedge"
+  },
+  "license": "MIT",
+  "keywords": [
+    "cerevo",
+    "livewedge",
+    "switcher",
+    "video"
+  ],
+  "author": "miyukki <yusei1128@gmail.com>",
+
+  "main": "./lib/livewedge.js",
+  "scripts": {
+    "postinstall": "coffee -bc ./lib/livewedge.coffee"
+  },
+  "dependencies": {
+    "coffee-script": "1.7.1"
+  }
+}
