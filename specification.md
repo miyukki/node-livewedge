@@ -121,6 +121,7 @@ TODO
 ### 0x09
 
 ### 0x10 Preview Source Setting
+Before command type is `0x08`
 Echo command type is `0x6e`
 ```
  0                   1                   2                   3
@@ -239,7 +240,7 @@ Echo command type is `0x75`
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
 
-### 0x3e Program PinP Border Setting
+### 0x3e Program PinP Border q
 Before comman type is `0x0c`
 ```
  0                   1                   2                   3
