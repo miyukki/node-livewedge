@@ -264,6 +264,7 @@ Before command type is `0x0c`.
 ```
 
 ### 0x40 Program Keyer Setting
+Before command type is `0x40`.
 ```
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
