@@ -4,7 +4,7 @@ net = require "net"
 dgram = require "dgram"
 
 class LiveWedge
-  DEBUG = true
+  DEBUG = false
 
   TCP_PORT = 8888
   UDP_PORT = 8888
@@ -17,7 +17,12 @@ class LiveWedge
     Dip : 0x02
     Wipe: 0x03
 
+  @KeyType =
+    Chroma: 0x00
+    PinP  : 0x01
+
   constructor: ->
+    @state = {}
     @udp = dgram.createSocket "udp4"
     @tcp = new net.Socket
 
@@ -41,17 +46,32 @@ class LiveWedge
     @udp.send buffer, 0, buffer.length, UDP_PORT, @address
 
   _receiveTcpPacket: (bytes) =>
-    console.log "[TCP:LVW]", bytes
+    console.log "[TCP:LVW]", bytes if DEBUG
+    @_parseCommand(bytes)
 
   _receiveUdpPacket: (bytes, remote) =>
-    console.log "[UDP:LVW]", bytes
+    console.log "[UDP:LVW]", bytes if DEBUG
+    @_parseCommand(bytes)
+
+  _parseCommand: (bytes) ->
+    type = bytes[2] << 16 | bytes[1] << 8 | bytes[0]
+    data = bytes[4..]
+    switch type
+      when 0x6e
+        @state.previewInput = data[0] + 1
+      when 0x73
+        # if data[8] == 0x01 # complete
+        @state.programInput = data[8]
+
+  getState: ->
+    @state
 
   requestLocalDeviceList: (callback) ->
 
-  changeProgramInput: (input) ->
-    @_sendUdpPacket([0x1b, 0x00, 0x00, 0x00, 0x2d, 0xef, 0x5c, 0xc6, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, input, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
-  # setProgram
-  # setProgramPinP: (border_color, border_width, border_r, border_g)
+  changePreviewInput: (input) ->
+    @_sendTcpPacket([0x08, 0x00, 0x00, 0x00])
+    @_sendTcpPacket([0x10, 0x00, 0x00, 0x00,
+                    input-1, 0x00, 0x00, 0x00])
 
   autoTransition: (input, time = 1000, type = LiveWedge.TransitionType.Mix, dip_input = 0) ->
     @_sendTcpPacket([0x18, 0x00, 0x00, 0x00])
@@ -65,17 +85,20 @@ class LiveWedge
   autoFadeIn: (input, time = 1000) ->
     @autoTransition(input, time)
 
-  autoFadeOut: (input, time = 1000) ->
+  fadeToBlack: (time = 1000) ->
     @autoTransition(0, time)
 
-  autoKeyerTransition: (input, time = 1000, type = LiveWedge.TransitionType.Mix) ->
+  autoCutIn: (input) ->
+    @autoTransition(input, 0, LiveWedge.TransitionType.Cut)
+
+  autoKeyerTransition: (input, time = 1000, type = LiveWedge.TransitionType.Mix, dip_input = 0) ->
     @_sendTcpPacket([0x18, 0x00, 0x00, 0x00])
     @_sendTcpPacket([0x1c, 0x00, 0x00, 0x00,
                      0x2d, 0xef, 0x5c, 0xc6,
                      time & 0xff, time >> 8 & 0xff, 0x00, 0x00,
                      0x01, 0x00, 0x00, 0x00,
-                     0x00, type, 0x00, 0x00,
-                    input, 0x01, 0x00, 0x00])
+                     0x00, 0x00, 0x00, 0x00,
+                    input, type, dip_input, 0x00])
 
   autoKeyerFadeIn: (input, time = 1000) ->
     @autoKeyerTransition(input, time)
@@ -83,7 +106,9 @@ class LiveWedge
   autoKeyerFadeOut: (time) ->
     @autoKeyerTransition(0, time)
 
-  # changeTransitionPosition: () ->
-  # changeKeyerTransitionPosition: () ->
+  changeKeyerType: (type) ->
+    @_sendTcpPacket([0x08, 0x00, 0x00, 0x00])
+    @_sendTcpPacket([0x40, 0x00, 0x00, 0x00,
+                     type, 0x00, 0x00, 0x00])
 
 module.exports = LiveWedge

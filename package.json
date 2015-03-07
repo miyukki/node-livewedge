@@ -1,6 +1,6 @@
 {
   "name": "node-livewedge",
-  "version": "0.0.1",
+  "version": "0.0.2",
 
   "description": "A module to control Cerevo LiveWedge Switcher.",
   "homepage": "https://github.com/miyukki/node-livewedge",

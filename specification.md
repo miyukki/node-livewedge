@@ -180,12 +180,14 @@ Return command type is `0x73`.
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |              Transition Position              |     0x00      |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|Key Transition?|     0x00      |     0x00      |     0x00      |
+|  Move Target  |     0x00      |     0x00      |     0x00      |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 | Target Input  |  Effect Type  |   DIP Input   |     0x00      |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|   Key Input   | Key Move Flag |     0x00      |     0x00      |
+|   Key Input   |Key Effect Type|     0x00      |     0x00      |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+Transition Position: max is 0x10000(65536)
+Move Target: 0x00 = Main, 0x01 = Keyer(Sub), 0x02 = Both
 Key Input, Target Input: 0x00 = BLACK, 0x01 = In1, 0x02 = In2, 0x03 = In3, 0x04 = In4
 Effect Type: 0x00 = CUT, 0x01 = MIX, 0x02 = DIP, 0x03 = WIPE
 Effect Detail...
@@ -199,15 +201,15 @@ Before command type is `0x18`.
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |     0x1c      |     0x00      |     0x00      |     0x00      |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
+|               Same as 0x1b Transition Position                |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |        Transition Time        |     0x00      |     0x00      |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Target Input  |  Effect Type  |   DIP Input   |     0x00      |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|     0x00      |     0x00      |     0x00      |     0x00      |
++                                                               +
+|               Same as 0x1b Transition Position                |
++                                                               +
+|                                                               |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 Transition Time: Milliseconds, max is 0x2710(10000)
 ```
@@ -264,7 +266,7 @@ Before command type is `0x0c`.
 ```
 
 ### 0x40 Program Keyer Setting
-Before command type is `0x40`.
+Before command type is `0x08`.
 ```
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
